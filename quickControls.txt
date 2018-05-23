@@ -1,0 +1,105 @@
+import maya.cmds as mc
+
+path = mc.workspace(query = True, rootDirectory = True)
+
+if mc.window("create control", exists = True):
+    mc.deleteUI("create control")
+
+myWindow = mc.window("create control", t = "Control Shapes")
+mc.columnLayout(adj = True)
+shape = mc.optionMenuGrp(label = 'Shape')
+mc.menuItem(label = "Circle")
+mc.menuItem(label = "Square")
+mc.menuItem(label = "Cube")
+mc.menuItem(label = "2D Arrow")
+mc.menuItem(label = "3D Arrow")
+colour = mc.colorIndexSliderGrp(label = 'Select Color', min = 0, max = 32, value = 0)
+mc.button(label = "Execute", command = "combine1()")
+mc.showWindow(myWindow)
+
+def combine1():
+    shapeChoice()
+    colourSet()
+
+def shapeChoice():
+    shapet = mc.optionMenuGrp(shape, query = True, value = True)
+    if shapet == "Circle":
+        createCircle()
+    elif shapet == "Square":
+        createSquare()
+    elif shapet == "Cube":
+        createCube()
+    elif shapet == "2D Arrow":
+        create2DArrow()
+    elif shapet == "3D Arrow":
+        create3DArrow()
+
+def createCircle():
+    sel = mc.ls(sl=True)
+    for s in sel:
+        shp = mc.circle(name = s + "_CTRL")
+        grp = mc.group(shp, name = s + "_Ctrl_GRP")
+    
+        pc = mc.pointConstraint(s, grp)
+        mc.delete(pc)
+    
+        oc = mc.pointConstraint(s, grp)
+        mc.delete(oc)
+        
+def createSquare():
+    sel = mc.ls(sl=True)
+    for s in sel:
+        shp = mc.curve(d = 1, p = [(-1, 0, 1), (-1, 0, -1), (1, 0, -1), (1, 0, 1), (-1, 0, 1)], k = [0, 1, 2, 3, 4], name = s + "_CTRL")
+        grp = mc.group(shp, name = s + "_Ctrl_GRP")
+    
+        pc = mc.pointConstraint(s, grp)
+        mc.delete(pc)
+    
+        oc = mc.pointConstraint(s, grp)
+        mc.delete(oc)
+       
+def createCube():
+    sel = mc.ls(sl=True)
+    for s in sel:
+        shp = mc.curve(d = 1, p = [(-0.5, -0.5, 0.5), (-0.5, -0.5, -0.5), (-0.5, 0.5, -0.5), (-0.5, 0.5, 0.5), (-0.5, -0.5, 0.5), (0.5, -0.5, 0.5), (0.5, -0.5, -0.5), (-0.5, -0.5, -0.5), (-0.5, -0.5, 0.5), (-0.5, 0.5, 0.5), (0.5, 0.5, 0.5), (0.5, -0.5, 0.5), (0.5, -0.5, -0.5), (0.5, 0.5, -0.5), (0.5, 0.5, 0.5), (-0.5, 0.5, 0.5), (-0.5, 0.5, -0.5), (0.5, 0.5, -0.5)], k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], name = s + "_CTRL")
+        grp = mc.group(shp, name = s + "_Ctrl_GRP")
+    
+        pc = mc.pointConstraint(s, grp)
+        mc.delete(pc)
+    
+        oc = mc.pointConstraint(s, grp)
+        mc.delete(oc)
+    
+def create2DArrow():
+    sel = mc.ls(sl=True)
+    for s in sel:
+        shp = mc.curve(d = 1, p = [(-12.5, 18.75, 0), (-25, 18.75, 0), (0, 43.75, 0), (25, 18.75, 0), (12.5, 18.75, 0), (12.5, -25, 0), (-12.5, -25, 0), (-12.5, 18.75, 0)], k = [0, 1, 2, 3, 4, 5, 6, 7], name = s + "_CTRL")
+        grp = mc.group(shp, name = s + "_Ctrl_GRP")
+    
+        pc = mc.pointConstraint(s, grp)
+        mc.delete(pc)
+    
+        oc = mc.pointConstraint(s, grp)
+        mc.delete(oc)
+    
+def create3DArrow():
+    sel = mc.ls(sl=True)
+    for s in sel:
+        shp = mc.curve(d = 1, p = [(0, 43.75, 0), (-25, 18.75, 0), (-12.5, 18.75, 0), (-12.5, -25, 0), (12.5, -25, 0), (12.5, 18.75, 0), (25, 18.75, 0), (0, 43.75, 0), (0, 18.75, 25), (0, 18.75, 12.5), (0, -25, 12.5), (0, -25, -12.5), (0, 18.75, -12.5), (0, 18.75, -25), (0, 43.75, 0)], k = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], name = s + "_CTRL")
+        grp = mc.group(shp, name = s + "_Ctrl_GRP")
+    
+        pc = mc.pointConstraint(s, grp)
+        mc.delete(pc)
+    
+        oc = mc.pointConstraint(s, grp)
+        mc.delete(oc)
+
+def colourSet():
+    colourMe = mc.colorIndexSliderGrp(colour, query = True, value = True) - 1
+    sel = mc.ls(sl = True)
+    
+    for s in sel:
+        mc.select(cl = True)
+        mc.setAttr(s + ".overrideEnabled", 1)
+        printMe = mc.setAttr(s + ".overrideColor", colourMe)
+        print colourMe
